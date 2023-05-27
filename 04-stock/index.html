@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CandlestickChart</title>
+</head>
+<body>
+    <div id="chart_div"></div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            // JSON 파일을 가져옴
+            fetch('stock_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    // JSON 데이터를 사용하여 DataTable 생성
+                    var dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', '날짜');
+                    dataTable.addColumn('number', '시가');
+                    dataTable.addColumn('number', '최고');
+                    dataTable.addColumn('number', '최저');
+                    dataTable.addColumn('number', '종가');
+                    dataTable.addRows(data.map(obj => [obj.Date, obj.Open, obj.High, obj.Low, obj.Close]));
+
+                    var options = {
+                        'title':'CandlestickChart',
+                        'width':700,
+                        'height':500,
+                        'legend':'none'
+                    };
+
+                    var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
+                    chart.draw(dataTable, options);
+                })
+                .catch(error => console.log('JSON 데이터를 가져오는 중 오류가 발생했습니다.', error));
+        }
+    </script>
+</body>
+</html>
